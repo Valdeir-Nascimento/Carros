@@ -1,4 +1,4 @@
-package br.com.carro.api;
+package br.com.carro.controller;
 
 import br.com.carro.domain.Carro;
 import br.com.carro.domain.dto.CarroDTO;

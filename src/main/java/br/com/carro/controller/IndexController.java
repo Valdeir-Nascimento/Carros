@@ -1,4 +1,4 @@
-package br.com.carro.api;
+package br.com.carro.controller;
 
 import org.springframework.web.bind.annotation.*;
 
