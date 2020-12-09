@@ -2,6 +2,7 @@ package br.com.carro.service;
 
 import br.com.carro.domain.Carro;
 import br.com.carro.domain.dto.CarroDTO;
+import br.com.carro.exception.ObjectNotFoundException;
 import br.com.carro.repository.CarroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,8 +32,9 @@ public class CarroService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<CarroDTO> getCarroById(Long id) {
-        return carroRepository.findById(id).map(CarroDTO::create);
+    public CarroDTO getCarroById(Long id) {
+        return carroRepository.findById(id).map(CarroDTO::create).orElseThrow(() -> new ObjectNotFoundException("Carro não encontrado"));
+
 //        Optional<Carro> carro = carroRepository.findById(id);
 //        if (carro.isPresent()) {
 //            //Convertendo para um Optional
@@ -74,12 +76,8 @@ public class CarroService {
         }
     }
 
-    public boolean delete(Long id) {
-        if (getCarroById(id).isPresent()) {
-            carroRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void delete(Long id) {
+        carroRepository.deleteById(id);
     }
 
 

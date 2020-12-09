@@ -5,6 +5,7 @@ import br.com.carro.domain.dto.CarroDTO;
 import br.com.carro.service.CarroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -27,7 +28,6 @@ public class CarroController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CarroDTO> getId(@PathVariable("id") Long id) {
-        Optional<CarroDTO> carro = carroService.getCarroById(id);
 //        if(carro.isPresent()) {
 //            //Carro c = carro.get();
 //            return ResponseEntity.ok(carro.get());
@@ -36,10 +36,9 @@ public class CarroController {
 //        }
 
 //        return carro.isPresent() ? ResponseEntity.ok(carro.get()) : ResponseEntity.notFound().build();
+        CarroDTO carro = carroService.getCarroById(id);
+        return ResponseEntity.ok(carro);
 
-        return carro
-                .map(ResponseEntity::ok) //c -> ResponseEntity.ok(c)
-                .orElse(ResponseEntity.notFound().build());
 
     }
 
@@ -51,18 +50,15 @@ public class CarroController {
 
     //@RequestBody converte os dados json em um objeto
     @PostMapping
-    public ResponseEntity carroPost(@RequestBody Carro carro) {
-        try {
-            CarroDTO c = carroService.criar(carro);
-            URI location = getUri(carro.getId());
-            return ResponseEntity.created(location).build();
-        } catch (Exception ex) {
-            return ResponseEntity.badRequest().build();
-        }
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity criar(@RequestBody Carro carro) {
+        CarroDTO c = carroService.criar(carro);
+        URI location = getUri(carro.getId());
+        return ResponseEntity.created(location).build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity carroPut(@PathVariable("id") Long id, @RequestBody Carro carro) {
+    public ResponseEntity atualizar(@PathVariable("id") Long id, @RequestBody Carro carro) {
         carro.setId(id);
         CarroDTO carroDTO = carroService.update(carro, id);
         return carroDTO != null ? ResponseEntity.ok(carroDTO) : ResponseEntity.notFound().build();
@@ -70,8 +66,8 @@ public class CarroController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity excluir(@PathVariable("id") Long id) {
-        boolean statusOk = carroService.delete(id);
-        return statusOk ? ResponseEntity.ok(statusOk) : ResponseEntity.notFound().build();
+        carroService.delete(id);
+        return ResponseEntity.ok().build();
     }
 
     //Montado a URL

@@ -1,5 +1,7 @@
 package br.com.carro.controller;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -8,13 +10,14 @@ public class IndexController {
 
     @GetMapping
     public String get() {
-        return "Get Spring Boot";
+        return "API de Carros";
     }
 
-    @GetMapping("/login/{login}/senha/{senha}")
-    public String login( @PathVariable("login") String login,  @PathVariable("senha") String senha) {
-        return "Login: " + login + " Senha: " + senha;
+    @GetMapping("/userInfo")
+    public UserDetails userInfo(@AuthenticationPrincipal UserDetails userDetails){
+        return userDetails;
     }
+
 
 
 }
